@@ -1,0 +1,3 @@
+rootProject.name = 'itime'
+
+include ':app'
