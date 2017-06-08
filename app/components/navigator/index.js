@@ -11,9 +11,14 @@ import {
   View
 } from 'react-native'
 
-import TodosView from '../../views/todos'
-import DailyPlanView from '../../views/dailyplan'
-import StatsView from '../../views/stats'
+import Home from '../../views/home'
+import Login from '../../views/login'
+import Missiondetail from '../../views/missiondetail'
+import Missions from '../../views/missions'
+import Records from '../../views/records'
+import Settings from '../../views/settings'
+import Stats from '../../views/stats'
+import Today from '../../views/today'
 
 
 export default class NavigatorComp extends Component {
@@ -21,7 +26,7 @@ export default class NavigatorComp extends Component {
     return (
       <View style={styles.container}>
         <Navigator
-          initialRoute={{name: 'todos', index: 0, id: 'todos'}}
+          initialRoute={{name: 'home', index: 0, id: 'home'}}
           configureScene={this._configureScene}
           renderScene={this._renderScene}
         />
@@ -31,17 +36,37 @@ export default class NavigatorComp extends Component {
 
   _renderScene(route, navigator) {
     switch (route.id) {
-      case 'todos':
+      case 'home':
         return (
-          <TodosView navigator={navigator} route={route}/>
+          <Home navigator={navigator} route={route}/>
         )
-      case 'dailyPlan':
+      case 'login':
         return (
-          <DailyPlanView navigator={navigator} route={route}/>
+          <Login navigator={navigator} route={route}/>
+        )
+      case 'missiondetail':
+        return (
+          <Missiondetail navigator={navigator} route={route}/>
+        )
+      case 'missions':
+        return (
+          <Missions navigator={navigator} route={route}/>
+        )
+      case 'records':
+        return (
+          <Records navigator={navigator} route={route}/>
+        )
+      case 'settings':
+        return (
+          <Settings navigator={navigator} route={route}/>
         )
       case 'stats':
         return (
-          <StatsView navigator={navigator} route={route}/>
+          <Stats navigator={navigator} route={route}/>
+        )
+      case 'today':
+        return (
+          <Today navigator={navigator} route={route}/>
         )
       default:
         break

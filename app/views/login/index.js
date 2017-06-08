@@ -11,7 +11,7 @@ import Index from '../stats';
 import config from '../../config';
 import RealmTasks from '../../realm';
 
-export default class LoginScreen extends React.Component {
+export default class Login extends React.Component {
   constructor (props) {
     super(props);
     this.state = { login: config.login, password: config.password, error: null };

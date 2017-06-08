@@ -12,7 +12,7 @@ import {
 } from 'react-native'
 
 
-export default class Stats extends Component{
+export default class Missiondetail extends Component{
   constructor(props) {
     super(props)
     this.state = {}

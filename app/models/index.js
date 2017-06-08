@@ -2,54 +2,49 @@
  * Created by kylechen on 17-5-31.
  */
 
-const DailyRecordSchema = {
-  name: 'DailyRecord',
+const Record = {
+  name: 'Record',
   properties: {
-    startTime: 'string',
-    endTime: 'string'
+    starttime: 'string',
+    endtime: 'string'
   }
 }
 
-const MissionRecordSchema = {
-  name: 'MissionRecord',
-  properties: {
-    date: 'string',
-    time: 'string'
-  }
-}
-
-const MissionSchema = {
+const Mission = {
   name: 'Mission',
   properties: {
     name: 'string',
-    type: {type: 'string', default: 'ni'},
-    timePerDay: 'string',
-    totalTime: 'string',
-    records: {type: 'list', objectType: 'MissionRecord'}
-  },
+    type: {type: 'string', optional: true},
+    plan: {type: 'string', optional: true},
+    total: {type: 'string', optional: true},
+    deadline: {type: 'string', optional: true},
+    color: 'string'
+  }
 };
 
-const TodoSchema = {
+const Todo = {
     name: 'Todo',
     properties: {
-      done: {type: 'bool', default: false},
       name: 'string',
-      type: 'string',
+      type: {type: 'string', optional: true},
+      done: {type: 'bool', default: false},
       needed: 'string',
       spent: 'string',
-      percentage: {type: 'float', default: 0},
       color: 'string',
-    },
+    }
 }
 
-const DailySchema = {
-  name: 'Daily',
+const Day = {
+  name: 'Day',
   properties: {
-    prevTime: 'string',
-    records: {type: 'list', objectType: 'DailyRecord'}
+    date: 'string',
+    learning: 'string',
+    waste: 'string',
+    dark: 'string',
+    getup: 'string',
+    sleep: 'string'
   }
 }
 
-export default [
-  DailyRecordSchema, MissionRecordSchema, MissionSchema,
-  TodoSchema, DailySchema];
+
+export default [Record, Mission, Todo, Day];

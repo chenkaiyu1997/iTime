@@ -4,6 +4,7 @@
 import React, {
   Component
 } from 'react'
+import Icon from 'react-native-vector-icons/Ionicons';
 
 import {
   StyleSheet,
@@ -12,25 +13,27 @@ import {
 
 import TabNavigator from 'react-native-tab-navigator'
 
-import TodosView from '../../views/todos'
-import DailyPlanView from '../../views/dailyplan'
-import StatsView from '../../views/stats'
+import Home from '../../views/home'
+import Missions from '../../views/missions'
+import Stats from '../../views/stats'
+import Today from '../../views/today'
 
 
 export default class TabBarComp extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      selectedTab: 'todos'
+      selectedTab: 'home'
     }
   }
 
   render() {
     return (
       <TabNavigator hidesTabTouch={true} sceneStyle={styles.sceneStyle}>
-        {this._renderTabItem('todos', <TodosView navigator={this.props.navigator}/>)}
-        {this._renderTabItem('dailyPlan', <DailyPlanView navigator={this.props.navigator}/>)}
-        {this._renderTabItem('stats', <StatsView navigator={this.props.navigator}/>)}
+        {this._renderTabItem('home', <Home navigator={this.props.navigator}/>)}
+        {this._renderTabItem('today', <Today navigator={this.props.navigator}/>)}
+        {this._renderTabItem('missions', <Missions navigator={this.props.navigator}/>)}
+        {this._renderTabItem('stats', <Stats navigator={this.props.navigator}/>)}
       </TabNavigator>
     )
   }
@@ -50,9 +53,9 @@ export default class TabBarComp extends Component {
     )
   }
 
-  _renderTabItemIcon(tag, selected = false) {
+  _renderTabItemIcon(tag, selected=false) {
     return (
-      <Text style={[styles.tabIcon, selected ? styles.selectedTabIcon : {}]}></Text>
+      <Icon name="ios-person" size={30} color="#ff9630" />
     )
   }
 }
