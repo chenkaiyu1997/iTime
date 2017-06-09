@@ -4,6 +4,8 @@
 import React, {
   Component
 } from 'react'
+import Icon from 'react-native-vector-icons/Ionicons';
+import I18n from '../../i18n/i18n'
 
 import {
   View,
@@ -23,7 +25,7 @@ const styles = {
   title: {
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 5
+    marginBottom: 10
   },
   titleText: {
     fontSize: 18
@@ -52,7 +54,7 @@ function _renderBarButton(text, handler, icon = false, buttonStyle = {}, buttonT
     <TouchableOpacity
       onPress={handler}
       style={[styles.button, buttonStyle]}>
-      <Text style={buttonText}>{text}</Text>
+      <Icon name="ios-person" size={30} color="#ff9630" />
     </TouchableOpacity>
   )
 }
@@ -67,50 +69,36 @@ export default class NavbarComp extends Component {
 
   _leftButton() {
     switch (this.props.route.id) {
-      case 'index':
-        return (<View></View>)
-      case 'tweet':
-        return _renderBarButton('Cancel', () => this.props.navigator.pop(), false, {
-          width: 50,
-          marginLeft: 10
+      case 'missiondetail':
+      case 'settings':
+      case 'records':
+        return _renderBarButton('md-arrow-round-back', () => this.props.navigator.pop(), {
+          paddingRight: 5
         })
       default:
-        return _renderBarButton('uniE617', () => this.props.navigator.pop(), true)
+        return (<View> </View>)
     }
   }
 
   _rightButton() {
     switch (this.props.route.id) {
-      case 'index':
-        return _renderBarButton('uniE601', () => {
-          this.props.navigator.push({
-            title: 'New Tweet',
-            id: 'tweet'
-          })
-        }, true, {
-          width: 50
-        })
-      case 'about':
-        return (<View></View>)
-      case 'tweet':
-        return _renderBarButton('Send', this.props.route.sendTweet, false, {
+      case 'missiondetail':
+        return _renderBarButton(I18n.t('confirm'), this.props.route.sendTweet, false, {
           width: 50,
           marginRight: 7
         })
-      case 'feedback':
-        return _renderBarButton('uniE603', this.props.route.sendFeedback, true, {
+      case 'today':
+      case 'missions':
+        return _renderBarButton('md-create', this.props.route.sendFeedback, true, {
           paddingRight: 5
         })
-      case 'tweetDetails':
-        return _renderBarButton('uniE60D', this.props.route.comment, true, {
-          paddingRight: 5
-        })
-      case 'comment':
-        return _renderBarButton('uniE603', this.props.route.sendComment, true, {
+      case 'home':
+      case 'stats':
+        return _renderBarButton('md-settings', this.props.route.sendFeedback, true, {
           paddingRight: 5
         })
       default:
-        break
+        return (<View></View>);
     }
   }
 

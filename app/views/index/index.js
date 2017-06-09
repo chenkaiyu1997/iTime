@@ -23,7 +23,8 @@ export default class Home extends Component{
   render() {
     return (
       <View style={styles.container}>
-        <Text>asdf</Text>
+        <NavbarComp route={this.props.route} navigator={this.props.navigator}/>
+        <TabBarComp route={this.props.route} navigator={this.props.navigator}/>
       </View>
     )
   }

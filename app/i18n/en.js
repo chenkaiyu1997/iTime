@@ -2,5 +2,10 @@
  * Created by kylechen on 17-6-8.
  */
 export default {
-  greeting: 'Hi!'
+  greeting: 'Hi!',
+  home: 'Todo',
+  missions: 'Projects',
+  today: 'List',
+  stats: 'Statistics',
+  confirm: 'Confirm'
 }

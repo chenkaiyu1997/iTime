@@ -18,6 +18,7 @@ import Missions from '../../views/missions'
 import Records from '../../views/records'
 import Settings from '../../views/settings'
 import Stats from '../../views/stats'
+import Index from '../../views/index'
 import Today from '../../views/today'
 
 
@@ -26,7 +27,7 @@ export default class NavigatorComp extends Component {
     return (
       <View style={styles.container}>
         <Navigator
-          initialRoute={{name: 'home', index: 0, id: 'home'}}
+          initialRoute={{name: 'index', index: 0, id: 'index'}}
           configureScene={this._configureScene}
           renderScene={this._renderScene}
         />
@@ -36,6 +37,10 @@ export default class NavigatorComp extends Component {
 
   _renderScene(route, navigator) {
     switch (route.id) {
+      case 'index':
+        return (
+          <Index navigator={navigator} route={route}/>
+        )
       case 'home':
         return (
           <Home navigator={navigator} route={route}/>
