@@ -3733,7 +3733,7 @@ react-native-photo-view@^1.2.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/react-native-photo-view/-/react-native-photo-view-1.2.0.tgz#d379d368b1a13f272f9672af2b0ce5c96fa15409"
 
-react-native-progress@^3.0.0:
+react-native-progress@^3.0.0, react-native-progress@^3.2.1:
   version "3.2.1"
   resolved "https://registry.yarnpkg.com/react-native-progress/-/react-native-progress-3.2.1.tgz#9f2353045c49f06803ae04d86a2cd5baa83cd465"
   dependencies:

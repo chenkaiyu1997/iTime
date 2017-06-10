@@ -31,6 +31,7 @@ const Todo = {
       needed: 'string',
       spent: 'string',
       color: 'string',
+      percentage: {type: 'float', default: 0}
     }
 }
 

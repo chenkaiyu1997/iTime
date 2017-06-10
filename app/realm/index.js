@@ -9,6 +9,28 @@ import config from '../config';
 
 let realm = null;
 
+function getRealm() {
+  return new Realm({
+    schema: schemas
+  });
+  let user = Realm.Sync.User.current;
+  if (!user) {
+    connect('login', '123', '123', (error, newuser) => {
+      user = newuser;
+      console.log(error ? error.message : "New user Success");
+    });
+  }
+  return new Realm({
+    sync: {
+      user: user,
+      url: config.db_uri,
+    },
+    schema: schemas,
+    path: config.db_path
+  });
+}
+
+
 function connect (action, username, password, callback) {
   username = username.trim();
   password = password.trim();
@@ -23,15 +45,7 @@ function connect (action, username, password, callback) {
       if (error) {
         return callback(new Error(error.message));
       } else {
-        realm = new Realm({
-          schema: schemas,
-          sync: {
-            user,
-            url: config.db_uri
-          },
-          path: config.db_path
-        });
-        return callback(null, realm);
+        return callback(null, user);
       }
     }
   );
@@ -40,5 +54,6 @@ function connect (action, username, password, callback) {
 export default {
   login: connect.bind(undefined, 'login'),
   register: connect.bind(undefined, 'register'),
-  realm
+  realm: realm,
+  getRealm: getRealm
 };

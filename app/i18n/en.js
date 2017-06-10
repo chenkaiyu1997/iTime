@@ -5,7 +5,7 @@ export default {
   greeting: 'Hi!',
   home: 'Todo',
   missions: 'Projects',
-  today: 'List',
+  today: 'Today',
   stats: 'Statistics',
   confirm: 'Confirm',
   done: 'Done',

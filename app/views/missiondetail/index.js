@@ -11,6 +11,7 @@ import {
   Text,
   Alert
 } from 'react-native'
+import NavbarComp from '../../components/navbar'
 
 
 export default class Missiondetail extends Component{

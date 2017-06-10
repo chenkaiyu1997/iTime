@@ -23,6 +23,7 @@
     "react-native-navbar": "^1.6.3",
     "react-native-parsed-text": "^0.0.16",
     "react-native-photo-browser": "^0.2.2",
+    "react-native-progress": "^3.2.1",
     "react-native-tab-navigator": "^0.3.3",
     "react-native-vector-icons": "^4.2.0",
     "realm": "^1.3.1"

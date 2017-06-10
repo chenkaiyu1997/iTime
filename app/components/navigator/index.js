@@ -18,6 +18,7 @@ import Records from '../../views/records'
 import Index from '../../views/index'
 import RealmTasks from '../../realm/index'
 
+
 export default class NavigatorComp extends Component {
   render() {
     return (
@@ -32,14 +33,7 @@ export default class NavigatorComp extends Component {
   }
 
   componentDidMount() {
-    RealmTasks.login(
-      '123',
-      '123',
-      (error, realm) => {
-        RealmTasks.realm = realm;
-        console.log(error ? error.message : "Success");
-      }
-    );
+    RealmTasks.realm = RealmTasks.getRealm();
   }
 
   _renderScene(route, navigator) {

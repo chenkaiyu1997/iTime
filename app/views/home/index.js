@@ -44,12 +44,12 @@ export default class Home extends Component{
   render() {
     return (
       <View style={styles.container}>
-        {/*<Screen>*/}
-          {/*<ListView*/}
-            {/*data={this.state.restaurants}*/}
-            {/*renderRow={this._renderRow}*/}
-          {/*/>*/}
-        {/*</Screen>*/}
+        <Screen>
+          <ListView
+            data={this.state.restaurants}
+            renderRow={this._renderRow}
+          />
+        </Screen>
       </View>
     )
   }
