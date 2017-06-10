@@ -22,7 +22,6 @@ export default class TabBarComp extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      selectedTab: 'home'
     }
   }
 
@@ -45,8 +44,8 @@ export default class TabBarComp extends Component {
         selectedTitleStyle={styles.selectedTitleStyle}
         renderIcon={() => this._renderTabItemIcon(tag)}
         renderSelectedIcon={() => this._renderTabItemIcon(tag, true)}
-        selected={this.state.selectedTab === tag}
-        onPress={() => this.setState({ selectedTab: tag })}>
+        selected={this.props.selectedTab === tag}
+        onPress={() => this.props.onChangeSelectedTab(tag)}>
         {childView}
       </TabNavigator.Item>
     )
@@ -60,7 +59,7 @@ export default class TabBarComp extends Component {
       'stats': 'md-ribbon'
     }
     return (
-      <Icon name={names[tag]} size={30} color={selected ? '#ff9630' : '#929292'}/>
+      <Icon name={names[tag]} size={25} color={selected ? '#39A9FF' : '#929292'}/>
     )
   }
 }
@@ -71,11 +70,11 @@ const styles = StyleSheet.create({
   },
   titleStyle: {
     color: '#929292',
-    fontSize: 12,
+    fontSize: 14,
     marginTop: -2
   },
   selectedTitleStyle: {
-    color: '#ff9630'
+    color: '#39A9FF'
   },
   tabIcon: {
     fontSize: 28,
@@ -83,6 +82,6 @@ const styles = StyleSheet.create({
     fontFamily: 'iconfont'
   },
   selectedTabIcon: {
-    color: '#ff9630'
+    color: '#39A9FF'
   }
 })

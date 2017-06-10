@@ -7,5 +7,10 @@ export default {
   missions: 'Projects',
   today: 'List',
   stats: 'Statistics',
-  confirm: 'Confirm'
+  confirm: 'Confirm',
+  done: 'Done',
+  missiondetail: 'Project Detail',
+  record: 'Records',
+  settings: 'About Me',
+  login: 'Login/Register',
 }

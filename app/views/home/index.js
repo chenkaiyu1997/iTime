@@ -11,13 +11,21 @@ import {
   Text
 } from 'react-native'
 
-import TabBarComp from '../../components/tabbar'
-import NavbarComp from '../../components/navbar'
 
 export default class Home extends Component{
   constructor(props) {
     super(props)
-    this.state = {}
+    this.state = {
+      editMode: false
+    }
+  }
+
+  componentWillMount() {
+    this.props.route.getEditMode = this._getEditMode.bind(this);
+  }
+
+  _getEditMode() {
+    return this.state.editMode;
   }
 
   render() {

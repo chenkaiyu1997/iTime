@@ -15,7 +15,17 @@ import {
 export default class Today extends Component{
   constructor(props) {
     super(props)
-    this.state = {}
+    this.state = {
+      editMode: false
+    }
+  }
+
+  componentWillMount() {
+    this.props.route.getEditMode = this._getEditMode.bind(this);
+  }
+
+  _getEditMode() {
+    return this.state.editMode;
   }
 
   render() {
