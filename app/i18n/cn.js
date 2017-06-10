@@ -10,7 +10,7 @@ export default {
   confirm: '确定',
   done: '完成',
   missiondetail: '任务详情',
-  record: '记录列表',
+  records: '记录列表',
   settings: '个人设置',
   login: '登录/注册'
 }

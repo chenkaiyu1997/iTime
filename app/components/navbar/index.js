@@ -87,28 +87,37 @@ export default class NavbarComp extends Component {
   }
 
   _rightButton() {
+
     switch (this.props.route.id) {
       case 'index':
         switch (this.props.selectedTab) {
           case 'home':
+            return _renderBarButton('md-create', () => this.props.navigator.push({
+              title: 'records',
+              id: 'records'
+            }), true);
           case 'today':
             if(!this.props.editMode) {
-              return _renderBarButton('md-create', this.props.route.toggleEditMode, true);
+              return _renderBarButton('md-create', this.props.onChangeEditMode.bind(undefined, true), true);
             }
-            return _renderBarButton(I18n.t('done'), this.props.route.toggleEditMode, false, {
+            return _renderBarButton(I18n.t('done'), this.props.onChangeEditMode.bind(undefined, false), false, {
               width: 50,
               marginRight: 7
             });
           case 'missions':
-            return _renderBarButton('md-add', this.props.route.addNew, true);
+            return _renderBarButton('md-add', () => this.props.navigator.push({
+              title: 'missiondetail',
+              missionid: undefined,
+              id: 'missiondetail'
+            }), true);
           default:
             return (<View/>)
         }
       case 'record':
         return _renderBarButton('md-add', this.props.route.addNew, true);
       case 'missiondetail':
-        return _renderBarButton(I18n.t('confirm'), this.props.route.confirm, false,{
-          width: 50,
+        return _renderBarButton(I18n.t('confirm'), this.props.route.confirmMission, false,{
+          width: 60,
           marginRight: 7
         });
       default:

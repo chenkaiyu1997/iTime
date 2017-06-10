@@ -10,7 +10,7 @@ export default {
   confirm: 'Confirm',
   done: 'Done',
   missiondetail: 'Project Detail',
-  record: 'Records',
+  records: 'Records',
   settings: 'About Me',
   login: 'Login/Register',
 }

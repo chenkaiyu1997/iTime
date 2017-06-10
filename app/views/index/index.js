@@ -41,9 +41,10 @@ export default class Home extends Component{
   render() {
     return (
       <View style={styles.container}>
-        <NavbarComp route={this.props.route} navigator={this.props.navigator} {...this.state} />
+        <NavbarComp route={this.props.route} navigator={this.props.navigator} {...this.state} onChangeSelectedTab={this._handleChangeSelectedTab}
+                    onChangeEditMode={this._handleChangeEditMode}/>
         <TabBarComp route={this.props.route} navigator={this.props.navigator} {...this.state} onChangeSelectedTab={this._handleChangeSelectedTab}
-        onChangeEditMode={this._handleChangeEditMode} />
+                    onChangeEditMode={this._handleChangeEditMode} />
       </View>
     )
   }

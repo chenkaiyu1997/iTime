@@ -28,10 +28,10 @@ export default class TabBarComp extends Component {
   render() {
     return (
       <TabNavigator hidesTabTouch={true} sceneStyle={styles.sceneStyle}>
-        {this._renderTabItem('home', <Home route={this.props.route} navigator={this.props.navigator}/>)}
-        {this._renderTabItem('today', <Today route={this.props.route} navigator={this.props.navigator}/>)}
-        {this._renderTabItem('missions', <Missions route={this.props.route} navigator={this.props.navigator}/>)}
-        {this._renderTabItem('stats', <Stats route={this.props.route} navigator={this.props.navigator}/>)}
+        {this._renderTabItem('home', <Home navigator={this.props.navigator}/>)}
+        {this._renderTabItem('today', <Today navigator={this.props.navigator}/>)}
+        {this._renderTabItem('missions', <Missions navigator={this.props.navigator}/>)}
+        {this._renderTabItem('stats', <Stats navigator={this.props.navigator}/>)}
       </TabNavigator>
     )
   }
@@ -45,7 +45,8 @@ export default class TabBarComp extends Component {
         renderIcon={() => this._renderTabItemIcon(tag)}
         renderSelectedIcon={() => this._renderTabItemIcon(tag, true)}
         selected={this.props.selectedTab === tag}
-        onPress={() => this.props.onChangeSelectedTab(tag)}>
+        onPress={() => this.props.onChangeSelectedTab(tag)}
+      >
         {childView}
       </TabNavigator.Item>
     )

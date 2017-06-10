@@ -16,7 +16,7 @@ import Missiondetail from '../../views/missiondetail'
 import Settings from '../../views/settings'
 import Records from '../../views/records'
 import Index from '../../views/index'
-
+import RealmTasks from '../../realm/index'
 
 export default class NavigatorComp extends Component {
   render() {
@@ -29,6 +29,17 @@ export default class NavigatorComp extends Component {
         />
       </View>
     )
+  }
+
+  componentDidMount() {
+    RealmTasks.login(
+      '123',
+      '123',
+      (error, realm) => {
+        RealmTasks.realm = realm;
+        console.log(error ? error.message : "Success");
+      }
+    );
   }
 
   _renderScene(route, navigator) {

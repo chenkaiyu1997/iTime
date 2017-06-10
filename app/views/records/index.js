@@ -8,8 +8,10 @@ import React, {
 import {
   StyleSheet,
   View,
-  Text
+  Text,
+  Alert
 } from 'react-native'
+import NavbarComp from '../../components/navbar'
 
 
 export default class Records extends Component{
@@ -18,13 +20,29 @@ export default class Records extends Component{
     this.state = {}
   }
 
+  componentWillMount() {
+    this.props.route.addNew = this.addNew.bind(this)
+  }
+
   render() {
     return (
       <View style={styles.container}>
+        <NavbarComp route={this.props.route} navigator={this.props.navigator}/>
         <Text>Hello!</Text>
       </View>
     )
   }
+
+  addNew() {
+    Alert.alert(
+      'Sent successfully',
+      this.state.text,
+      [
+        {text: 'OK', onPress: () => this.props.navigator.pop()}
+      ]
+    )
+  }
+
 }
 
 const styles = StyleSheet.create({
