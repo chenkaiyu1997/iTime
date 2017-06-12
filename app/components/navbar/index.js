@@ -10,7 +10,6 @@ import I18n from '../../i18n/i18n'
 import NavigationBar from 'react-native-navbar'
 
 
-
 import {
   View,
   Text,
@@ -107,7 +106,7 @@ export default class NavbarComp extends Component {
           default:
             return (<View/>)
         }
-      case 'record':
+      case 'records':
         return _renderBarButton('md-add', this.props.route.addNew, true);
       // case 'missiondetail':
       //   return _renderBarButton(I18n.t('confirm'), this.props.route.confirmMission, false,{

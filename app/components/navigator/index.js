@@ -46,7 +46,7 @@ export default class NavigatorComp extends Component {
         )
       case 'missiondetail':
         return (
-          <Missiondetail navigator={navigator} route={route}/>
+          <Missiondetail {...route.params} navigator={navigator} route={route}/>
         )
 
       case 'records':

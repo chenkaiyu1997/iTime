@@ -7,8 +7,8 @@ function m2s(minutes) {
     let flag = (minutes < 0);
     if(minutes < 0)
         minutes = -minutes;
-    let h = minutes / 60;
-    let m = minutes % 60;
+    let h = parseInt(minutes / 60, 10);
+    let m = parseInt(minutes % 60, 10);
     return (flag ? '-' : '') + h + ':' + (m < 10 ? '0' : '') + m;
 }
 

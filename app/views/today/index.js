@@ -3,7 +3,8 @@ import React, {
 } from 'react'
 
 import {
-  StyleSheet
+  StyleSheet,
+  ScrollView
 } from 'react-native'
 
 import {View, ListView, Image, Caption, Tile, Title, Text, Subtitle, Button, Screen, Divider, Icon, Row} from '@shoutem/ui'
@@ -31,6 +32,7 @@ export default class Today extends Component{
 
     this.updateTime = this.updateTime.bind(this);
     this.renderTodoRow = this.renderTodoRow.bind(this);
+    this.renderMissionRow = this.renderMissionRow.bind(this);
 
   }
 
@@ -64,12 +66,12 @@ export default class Today extends Component{
   }
 
   addTodo(i) {
-    let mission = this.missions[i];
+    let mission = this.tmpMission[i];
     RealmTasks.realm.write(() => {
       RealmTasks.realm.create('Todo', {
         id: mission.id,
         name: mission.name,
-        needed: mission.daily || 1,
+        needed: mission.daily || 0,
         spent: 0
       });
     });
@@ -77,7 +79,7 @@ export default class Today extends Component{
 
   updateTime(i, time) {
     RealmTasks.realm.write(() => {
-      this.todos[i].needed = time;
+      this.todos[i].needed = utils.s2m(time);
     });
   }
 
@@ -85,11 +87,11 @@ export default class Today extends Component{
     return (
       <View>
         <Row styleName="small">
-          <Icon name="add-to-favorites-open"/>
+          <Icon name="add-to-favorites-off"/>
           <Text>{mission.name}</Text>
 
           <Button title="delete" styleName="right-icon" onPress={() => this.addTodo(i)}>
-            <Icon name="add" />
+            <Icon name="add-event" />
           </Button>
         </Row>
         <Divider styleName="line"/>
@@ -100,7 +102,7 @@ export default class Today extends Component{
     return (
       <View>
         <Row styleName="small">
-         {/*<Icon name="add-to-favorites-open"/>*/}
+         {/*<Icon name="add-to-favorites-on"/>*/}
         <Progress.Pie style={styles.rowleft} progress={todo.percentage} size={20} color={config.blue}/>
         <Text>{todo.name}</Text>
 
@@ -122,7 +124,7 @@ export default class Today extends Component{
 
   render() {
     return (
-      <View>
+      <ScrollView>
         <Divider styleName="section-header">
           <Caption>Todo list</Caption>
         </Divider>
@@ -135,15 +137,15 @@ export default class Today extends Component{
         </Divider>
         <ListView
           data={this.tmpMission}
-          renderRow={this.renderRow}
+          renderRow={this.renderMissionRow}
         />
         <Button>
-          <Icon name = "add-to-favorites-full"/>
+          <Icon name = "checkbox-on"/>
           <Text>{utils.m2s(this.sum)}</Text>
         </Button>
 
         <TimePicker ref={(ref) => this.timePicker = ref}/>
-      </View>
+      </ScrollView>
     )
   }
 }

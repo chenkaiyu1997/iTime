@@ -7,11 +7,12 @@ import React, {
 
 import {
   StyleSheet,
-  Text
+  Text,
+  View
 } from 'react-native'
 
 import {
-  View, Spinner
+  Spinner
 } from '@shoutem/ui'
 import TabBarComp from '../../components/tabbar'
 import NavbarComp from '../../components/navbar'
@@ -25,11 +26,14 @@ export default class Home extends Component{
       selectedTab: 'home',
       hasRealm: false
     }
+
+    this._handleChangeSelectedTab = this._handleChangeSelectedTab.bind(this);
+  }
+
+  componentDidMount() {
     RealmTasks.getRealm(manager.startup, () => {this.setState({
       hasRealm: true
     })});
-
-    this._handleChangeSelectedTab = this._handleChangeSelectedTab.bind(this);
   }
 
   _handleChangeSelectedTab(selectedTab) {
@@ -39,17 +43,19 @@ export default class Home extends Component{
   }
 
   render() {
+    if(this.state.hasRealm) {
+      return (
+        <View style={styles.container}>
+          <NavbarComp route={this.props.route} navigator={this.props.navigator} {...this.state}
+                      onChangeSelectedTab={this._handleChangeSelectedTab}/>
+          <TabBarComp route={this.props.route} navigator={this.props.navigator} {...this.state}
+                      onChangeSelectedTab={this._handleChangeSelectedTab}/>
+        </View>
+      )
+    }
     return (
       <View>
-        {this.state.hasRealm ?
-          <View>
-            <NavbarComp route={this.props.route} navigator={this.props.navigator} {...this.state}
-                    onChangeSelectedTab={this._handleChangeSelectedTab}/>
-            <TabBarComp route={this.props.route} navigator={this.props.navigator} {...this.state} onChangeSelectedTab={this._handleChangeSelectedTab}/>
-          </View>
-          :
           <Spinner/>
-        }
       </View>
     )
   }

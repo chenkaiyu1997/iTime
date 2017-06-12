@@ -3,7 +3,8 @@ import React, {
 } from 'react'
 
 import {
-  StyleSheet
+  StyleSheet,
+  ScrollView
 } from 'react-native'
 
 import {View, ListView, Image, Caption, Tile, Title, Text, Subtitle, Button, Screen, Divider, Icon, Row, DropDownMenu} from '@shoutem/ui'
@@ -13,7 +14,7 @@ import config from '../../config/index'
 import TimePicker from '../../components/timepicker/index'
 import utils from '../../utils/index'
 import NavbarComp from '../../components/navbar'
-
+let moment = require('moment');
 
 export default class Records extends Component{
   constructor(props) {
@@ -22,13 +23,13 @@ export default class Records extends Component{
     this.todos = RealmTasks.realm.objects('Todo');
     this.missions = RealmTasks.realm.objects('Mission');
     this.tmpMissions = [];
-    for (let i = 0; i < this.missions.length; i++)
+    for (let i = 0; i < this.todos.length; i++)
       this.tmpMissions.push({
-        title: this.missions[i].name,
-        value: this.missions[i].id
+        title: this.todos[i].name,
+        value: this.todos[i].id
       });
 
-    this.records = RealmTasks.realm.objects('Records').sorted('starttime');
+    this.records = RealmTasks.realm.objects('Record').sorted('starttime');
 
     this.getTmpRecords();
     this.lastTime = this.records.length > 0 ? this.records[this.records.length-1].endtime : '0:00';
@@ -40,6 +41,7 @@ export default class Records extends Component{
 
     this.updateTime = this.updateTime.bind(this);
     this.renderRow = this.renderRow.bind(this);
+    this.findRowId = this.findRowId.bind(this);
   }
 
   componentWillMount() {
@@ -48,19 +50,23 @@ export default class Records extends Component{
 
   updateOthers(id, minutes) {
 
-    let mission = this.todos.filtered('id = ' + id);
+    let mission = this.missions.filtered('id = ' + id);
     if(mission.length !== 1)
-      console.error("Cant find mission");
+      console.warn("Cant find mission");
 
     let todo = this.todos.filtered('id = ' + id);
     if(todo.length !== 1)
-      console.error("Cant find todo");
+      console.warn("Cant find todo");
 
     RealmTasks.realm.write(() => {
-      todo.spent += minutes;
-      todo.percentage = min(1.0, todo.spent / todo.needed);
-      mission.spent += minutes;
-      mission.percentage = min(1.0, mission.spent / mission.needed);
+      if(todo.length === 1)
+        todo[0].spent += minutes;
+      if(todo.length === 1)
+        todo[0].percentage = Math.min(1.0, todo[0].needed === 0 ? 0 : todo[0].spent / todo[0].needed);
+      if(mission.length === 1)
+        mission[0].spent += minutes;
+      if(mission.length === 1)
+        mission[0].percentage = Math.min(1.0, mission[0].needed === 0 ? 0 :mission[0].spent / mission[0].needed);
     });
   }
 
@@ -124,11 +130,17 @@ export default class Records extends Component{
     });
   }
 
-
+  findRowId(recordId) {
+    for(let ti = 0; ti < this.tmpMissions.length; ti++)
+      if(this.tmpMissions[ti].id === recordId)
+        return ti;
+    return 0;
+  }
   renderRow(record,sectionId,i){
     return (
       <View>
         <Row styleName="small">
+
 
           <Button title="adjusttime" onPress={() => this.adjustTime(record.starttime, i, 'starttime')}>
             <Text>{record.starttime}</Text>
@@ -140,16 +152,12 @@ export default class Records extends Component{
 
           <DropDownMenu
             options={this.tmpMissions}
-            selectedOption={() => {
-              for(let ti = 0; ti < this.tmpMissions; ti++)
-                if(record.id === this.tmpMissions[ti].value)
-                  return this.tmpMissions[ti];
-              return this.tmpMissions[0];
-            }}
+            selectedOption={this.tmpMissions[this.findRowId(record.id)]}
             onOptionSelected={(option) => this.changeId(i, option)}
             titleProperty="title"
             valueProperty="value"/>
-          <Text onPress={() => this.changeId(i, 'endtime')}>{record.name}</Text>
+          <Text>{record.name}</Text>
+
 
           <Button title="adjusttime" styleName="disclosure" onPress={() => this.adjustTime(record.endtime, i, 'endtime')}>
             <Text>{record.endtime}</Text>
@@ -162,6 +170,9 @@ export default class Records extends Component{
           <Button title="delete" styleName="right-icon" onPress={() => this.deleteRecord(i)}>
             <Icon name="close" />
           </Button>
+
+
+
         </Row>
         <Divider styleName="line"/>
       </View>)

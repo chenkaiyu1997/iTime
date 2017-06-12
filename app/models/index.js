@@ -18,11 +18,11 @@ const Mission = {
     id: 'int',
     name: 'string',
     type: {type: 'int', optional: true},
-    daily: {type: 'int', default: 1},
+    daily: {type: 'int', default: 0},
     spent: {type: 'int', default: 0},
     date: 'string',
     percentage: {type: 'float', default: 0},
-    needed: {type: 'int', default: 1},
+    needed: {type: 'int', default: 0},
     deadline: {type: 'string', optional: true},
     color: {type: 'string', optional: true}
   }

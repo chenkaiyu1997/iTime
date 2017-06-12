@@ -6,6 +6,7 @@
 import Realm from 'realm';
 import schemas from '../models';
 import config from '../config';
+import RealmTasks from '../realm/index'
 
 let realm = null;
 
@@ -16,7 +17,7 @@ function getRealm(next, next2) {
       connect('login', 'testuser', 'testuser', (error, newuser) => {
         console.warn('connected');
         user = newuser;
-        realm = new Realm({
+        RealmTasks.realm = new Realm({
           sync: {
             user: user,
             url: config.db_uri,
@@ -25,14 +26,13 @@ function getRealm(next, next2) {
           path: config.db_path
         });
         console.log(error ? error.message : "New user Success");
-        set
         next();
         next2();
       });
     });
   }
   else {
-    realm = new Realm({
+    RealmTasks.realm = new Realm({
       sync: {
         user: user,
         url: config.db_uri,

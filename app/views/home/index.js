@@ -3,7 +3,8 @@ import React, {
 } from 'react'
 
 import {
-  StyleSheet
+  StyleSheet,
+  ScrollView
 } from 'react-native'
 
 import {View, ListView, Image, Caption, Tile, Title, Text, Subtitle, Button, Screen, Divider, Icon, Row} from '@shoutem/ui'
@@ -19,7 +20,7 @@ export default class Home extends Component{
   constructor(props) {
     super(props)
 
-    this.todos = RealmTasks.realm.objects('Todo').sorted('percentage', true);
+    this.todos = RealmTasks.realm.objects('Todo').sorted('percentage', 'reverse');
     this.getTmpTodos();
     this.todos.addListener((name, changes) => {
       this.getTmpTodos();
@@ -49,7 +50,7 @@ export default class Home extends Component{
       if(this.todos[i].completed)
         this.tmpCompletedTodo.push(this.todos[i]);
       else {
-        this.sum += max(0, this.todos[i].needed - this.todos[i].spent);
+        this.sum += Math.max(0, this.todos[i].needed - this.todos[i].spent);
         this.tmpTodo.push(this.todos[i]);
       }
     }
@@ -67,9 +68,10 @@ export default class Home extends Component{
 
   addRecord(i, time) {
     let minutes = utils.s2m(time) - utils.s2m(this.lastTime);
+    if(minutes < 0) return;
     i = this.todos[i].id;
 
-    let mission = this.todos.filtered('id = ' + i);
+    let mission = this.missions.filtered('id = ' + i);
     if(mission.length !== 1)
       console.error("Cant find mission");
 
@@ -78,16 +80,20 @@ export default class Home extends Component{
       console.error("Cant find todo");
 
     RealmTasks.realm.write(() => {
-      todo.spent += minutes;
-      todo.percentage = min(1.0, todo.spent / todo.needed);
+      if(todo.length === 1)
+        todo[0].spent += minutes;
+      if(todo.length === 1)
+        todo[0].percentage = Math.min(1.0, todo[0].spent / todo[0].needed);
 
-      mission.spent += minutes;
-      mission.percentage = min(1.0, mission.spent / mission.needed);
+      if(mission.length === 1)
+        mission[0].spent += minutes;
+      if(mission.length === 1)
+        mission[0].percentage = Math.min(1.0, mission[0].spent / mission[0].needed);
 
       RealmTasks.realm.create('Record', {
         starttime: this.lastTime,
         id: i,
-        name: todo.name,
+        name: mission[0].name,
         endtime: time
       });
     });
@@ -104,18 +110,18 @@ export default class Home extends Component{
 
           <Button title="record" styleName="right-icon" onPress={() => {}}>
             <Text>
-              {todo.spent - todo.needed}
+              {utils.m2s(todo.spent - todo.needed)}
             </Text>
           </Button>
 
-          <Button title="record" styleName="right-icon" onPress={() => this.addRecord(i)}>
+          <Button title="record" styleName="right-icon" onPress={() => this.addRecord(i, moment().format('H:mm'))}>
             <Icon name="add-event" />
           </Button>
           <Button title="modify-record" styleName="right-icon" onPress={() => this.modifyAdd(i)}>
             <Icon name="edit" />
           </Button>
           <Button title="complete" styleName="right-icon" onPress={() => this.completeTodo(i, true)}>
-            <Icon name="share" />
+            <Icon name="checkbox-on" />
           </Button>
         </Row>
         <Divider styleName="line"/>
@@ -131,7 +137,7 @@ export default class Home extends Component{
 
           <Button title="record" styleName="right-icon" onPress={() => {}}>
             <Text>
-              {todo.spent - todo.needed}
+              {utils.m2s(todo.spent - todo.needed)}
             </Text>
           </Button>
 
@@ -145,7 +151,7 @@ export default class Home extends Component{
 
   render() {
     return (
-      <View>
+      <ScrollView>
         <Divider styleName="section-header">
           <Caption>Todo</Caption>
         </Divider>
@@ -161,11 +167,11 @@ export default class Home extends Component{
           renderRow={this.renderCompletedRow}
         />
         <Button>
-          <Icon name = "add-to-favorites-full"/>
+          <Icon name = "like"/>
           <Text>{utils.m2s(this.sum)} To go ~</Text>
         </Button>
         <TimePicker ref={(ref) => this.timePicker = ref}/>
-      </View>
+      </ScrollView>
     )
   }
 }

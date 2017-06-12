@@ -3,7 +3,8 @@ import React, {
 } from 'react'
 
 import {
-  StyleSheet
+  StyleSheet,
+  ScrollView
 } from 'react-native'
 
 import {View, ListView, Image, Caption, Tile, Title, Text, Subtitle, Button, Screen, Divider, Icon, Row} from '@shoutem/ui'
@@ -25,31 +26,38 @@ export default class Stats extends Component{
 
   getTmpDays() {
     this.tmpDays = [];
-    for (let i = 0; i < this.days.length; i++) {
-        this.tmpDays.push(this.days[i]);
+    for (let i = 1; i < this.days.length; i++) {
+      this.tmpDays.push(this.days[i]);
     }
   }
 
   renderDayRow(day,sectionId,i){
     return (
       <Row>
-        <View/>
-        <Title>{day.grade}</Title>
+        <Button>
+          <Title>{day.date}</Title>
+        </Button>
+        <Button>
+          <Title></Title>
+        </Button>
         <View styleName="vertical stretch space-between">
-          <Subtitle>{'Percentage:' + day.percentage + '\nLearning Time:' + day.learning}</Subtitle>
+          <Subtitle>{'Percentage: ' + day.percentage + '\nLearning Time: ' + day.learning}</Subtitle>
           <Caption>{day.getup + '~' +  day.sleep}</Caption>
         </View>
+        <Button styleName="disclosure">
+          <Title>{day.grade}</Title>
+        </Button>
       </Row>)
   }
 
   render() {
     return (
-      <View>
+      <ScrollView>
         <ListView
           data={this.tmpDays}
           renderRow={this.renderDayRow}
         />
-      </View>
+      </ScrollView>
     )
   }
 }
@@ -59,7 +67,7 @@ const styles = StyleSheet.create({
     flexGrow: 1
   },
   rowleft: {
-    marginRight: 10
+    marginRight: 20
   },
   rowRight: {
     alignSelf: 'flex-end'

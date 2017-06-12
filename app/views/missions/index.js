@@ -3,7 +3,9 @@ import React, {
 } from 'react'
 
 import {
-  StyleSheet
+  StyleSheet,
+  ScrollView,
+  Alert
 } from 'react-native'
 
 import {TextInput, View, ListView, Image, Caption, Tile, Title, Text, Subtitle, Button, Screen, Divider, Icon, Row, DropDownMenu} from '@shoutem/ui'
@@ -12,6 +14,8 @@ import * as Progress from 'react-native-progress';
 import config from '../../config/index'
 import TimePicker from '../../components/timepicker/index'
 import utils from '../../utils/index'
+let moment = require('moment');
+
 
 export default class Missions extends Component{
   constructor(props) {
@@ -25,6 +29,7 @@ export default class Missions extends Component{
     });
 
     this.renderRow = this.renderRow.bind(this);
+    this.deleteMission = this.deleteMission.bind(this);
     this.state = {
       editMode: false,
       text: ''
@@ -36,7 +41,7 @@ export default class Missions extends Component{
     this.maxid = 0;
     for (let i = 0; i < this.missions.length; i++) {
       this.tmpMissions.push(this.missions[i]);
-      this.maxid = max(this.maxid, this.missions[i].id);
+      this.maxid = Math.max(this.maxid, this.missions[i].id);
     }
   }
 
@@ -60,11 +65,11 @@ export default class Missions extends Component{
     });
   }
   finishName(state) {
-    this.setState({
-      editMode: false
-    });
     if(state)
       this.addMission();
+    setImmediate(() => this.setState({
+      editMode: false
+    }));
   }
 
   addMission() {
@@ -77,27 +82,72 @@ export default class Missions extends Component{
     });
   }
 
+
+  deleteMission(i) {
+    RealmTasks.realm.write(() => {
+      RealmTasks.realm.delete(this.missions[i]);
+    });
+  }
+
+  deleteAlert(i) {
+    Alert.alert(
+      'Are you sure',
+      'This operation may not be recovered',
+      [
+        {text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
+        {text: 'OK', onPress: () => setImmediate(() => this.deleteMission(i))},
+      ],
+      { cancelable: true }
+    )
+  }
+
   renderRow(mission,sectionId,i){
     return (
       <View>
-        <Row styleName="small" onPress={() => this.handlePress(i)}>
+        <Row styleName="small">
 
           <Progress.Pie style={styles.rowleft} progress={mission.percentage} size={20} color={config.blue}/>
 
           <Text>{mission.name}</Text>
 
-          <Icon styleName="disclosure" name="right-arrow"/>
+          <Button title="adjusttime" styleName="disclosure" onPress={() => this.handlePress(i)}>
+            <Text>{'View Detail'}</Text>
+            <Icon name="search"/>
+          </Button>
+
+          <Icon styleName="disclosure" name="close" onPress={() => this.deleteAlert(i)}/>
+
 
         </Row>
         <Divider styleName="line"/>
       </View>)
   }
+  renderFooter() {
+    console.warn(this.state.editMode)
+    if(this.state.editMode === true)
+      return(
+        <TextInput
+          ref="textinput"
+          placeholder={'input name'}
+          onChangeText={(text) => this.onTextChange(text)}
+          onEndEditing={() => this.finishName(true)}
+          onBlur={() => this.finishName(false)}
+          onSubmitEditing={() => this.finishName(true)}
+        />);
+    return (
+      <Button onPress={() => this.addSimpleMission()}>
+        <Icon name = "add-event"/>
+        <Text>Add simple mission</Text>
+      </Button>
+    );
+  }
 
   render() {
     return (
-      <View>
+      <ScrollView>
         <ListView
           data={this.tmpMissions}
+          key={this.state.editMode}
           renderRow={this.renderRow}
         />
         {this.state.editMode ?
@@ -109,13 +159,12 @@ export default class Missions extends Component{
             onSubmitEditing={() => this.finishName(true)}
           />
           :
-          <Button onPress={() => addSimpleMission()}>
+          <Button onPress={() => this.addSimpleMission()}>
             <Icon name = "add-event"/>
             <Text>Add simple mission</Text>
-          </Button>
-        }
+          </Button>}
         <TimePicker ref={(ref) => this.timePicker = ref}/>
-      </View>
+      </ScrollView>
     )
   }
 }

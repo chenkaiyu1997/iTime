@@ -9,7 +9,7 @@ import {
   StyleSheet
 } from 'react-native'
 
-import {View, ListView, Image, Caption, Tile, Title, Text, Subtitle, Button, Screen, Divider, Icon, Row, DropDownMenu} from '@shoutem/ui'
+import {View, TextInput, ListView, Image, Caption, Tile, Title, Text, Subtitle, Button, Screen, Divider, Icon, Row, DropDownMenu} from '@shoutem/ui'
 import RealmTasks from '../../realm/index';
 import * as Progress from 'react-native-progress';
 import config from '../../config/index'
@@ -17,42 +17,48 @@ import DatePicker from '../../components/datepicker/index'
 import utils from '../../utils/index'
 import NavbarComp from '../../components/navbar'
 import TimePicker from '../../components/timepicker/index'
-
+let moment = require('moment');
 
 export default class Missiondetail extends Component{
   constructor(props) {
-    super(props)
+    super(props);
 
     this.id = this.props.missionid;
-    this.mission = RealmTasks.realm.objects('Mission').filtered('id = ' + this.id);
-    if(mission.length === 0)
+    this.missions = RealmTasks.realm.objects('Mission').filtered('id = ' + this.id);
+    if(this.missions.length === 0)
       console.error("no mission found!");
-    this.mission = this.mission[0];
+    this.mission = this.missions[0];
 
-    this.mission.addListener((name, changes) => {
+    this.missions.addListener((name, changes) => {
       this.forceUpdate();
     });
 
     this.state = {
-      name: '',
-      daily: 1,
+      name: this.mission.name,
+      daily: this.mission.daily,
       spent: 0,
-      date: '',
+      date: this.mission.date,
       needed: 1,
       deadline: ''
     };
 
     this.renderitem = this.renderitem.bind(this);
+    this.updateDate = this.updateDate.bind(this);
+
   }
   onChangeText(part, text) {
-    this.setState((prev) => {
-      prev[text] = text;
-      return prev;
-    })
+    let tmp = {};
+    tmp[part] = text;
+    this.setState(tmp);
   }
-  onSubmit(part) {
+  onSubmit(part, state, keyboard) {
+    if(state === false)
+      return;
+    let tmp = this.state[part];
+    if(keyboard === 'numeric')
+      tmp = parseInt(tmp, 10);
     RealmTasks.realm.write(() => {
-      this.mission[part] = this.state[part];
+      this.mission[part] = tmp;
     });
   }
   renderitem(part, keyboard='default') {
@@ -64,24 +70,24 @@ export default class Missiondetail extends Component{
           </Caption>
         </Divider>
         <TextInput
-        placeholder={part}
-        value={this.state[part]}
-        onChangeText={(text) => this.onTextChange(part, text)}
-        onEndEditing={() => this.onSubmit(part, true)}
-        onBlur={() => this.onSubmit(part, false)}
-        onSubmitEditing={() => this.onSubmit(part, true)}
-        keyboardType={keyboard}
+          value={'' + this.state[part]}
+          placeholder={part}
+          onChangeText={(text) => this.onChangeText(part, text)}
+          onEndEditing={() => this.onSubmit(part, true, keyboard)}
+          onBlur={() => this.onSubmit(part, false, keyboard)}
+          onSubmitEditing={() => this.onSubmit(part, true, keyboard)}
+          keyboardType={keyboard}
         />
       </View>
     )
   }
-  showPicker(part) {
-    this.datePicker.show(t, this.updateDate.bind(undefined, part, type));
+  showPicker(t, part) {
+    this.datePicker.show(t, this.updateDate.bind(undefined, part));
   }
   updateDate(part, time) {
     RealmTasks.realm.write(() => {
       this.mission[part] = time;
-      this.needed = this.mission.daily * moment().diff(moment(time), 'days') + 1;
+      this.needed = this.mission.daily * moment().diff(moment(time, 'MM-DD-YYYY'), 'days') + 1;
       this.percentage = this.needed === 0 ? 0 : this.spent / this.needed;
     });
   }
@@ -94,10 +100,14 @@ export default class Missiondetail extends Component{
         {this.renderitem('name')}
         {this.renderitem('daily', 'numeric')}
         {this.renderitem('spent', 'numeric')}
-
-        <Row onPress={() => this.showPicker('date')}>
+        <Divider styleName="section-header">
+          <Caption>
+            {'Date'}
+          </Caption>
+        </Divider>
+        <Row>
           <Text>{this.mission.date}</Text>
-          <Icon name="add-create"/>
+          <Icon name="add-event" onPress={() => this.showPicker(this.mission.date, 'date')}/>
         </Row>
         <DatePicker ref={(ref) => this.datePicker = ref}/>
       </View>
