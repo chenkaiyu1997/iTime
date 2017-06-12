@@ -9,22 +9,40 @@ import config from '../config';
 
 let realm = null;
 
-function getRealm() {
+function getRealm(next, next2) {
   let user = Realm.Sync.User.current;
-  if (true) {
-    connect('login', 'testuser', 'testuser', (error, newuser) => {
-      user = newuser;
-      console.log(error ? error.message : "New user Success");
+  if (!user) {
+    connect('register', 'testuser', 'testuser', (error, newuser) => {
+      connect('login', 'testuser', 'testuser', (error, newuser) => {
+        console.warn('connected');
+        user = newuser;
+        realm = new Realm({
+          sync: {
+            user: user,
+            url: config.db_uri,
+          },
+          schema: schemas,
+          path: config.db_path
+        });
+        console.log(error ? error.message : "New user Success");
+        set
+        next();
+        next2();
+      });
     });
   }
-  return new Realm({
-    sync: {
-      user: user,
-      url: config.db_uri,
-    },
-    schema: schemas,
-    path: config.db_path
-  });
+  else {
+    realm = new Realm({
+      sync: {
+        user: user,
+        url: config.db_uri,
+      },
+      schema: schemas,
+      path: config.db_path
+    });
+    next();
+    next2();
+  }
 }
 
 
@@ -40,7 +58,7 @@ function connect (action, username, password, callback) {
   Realm.Sync.User[action](config.auth_uri, username, password,
     (error, user) => {
       if (error) {
-        return callback(new Error(error.message));
+        console.warn(error);
       } else {
         return callback(null, user);
       }

@@ -16,9 +16,6 @@ import Missiondetail from '../../views/missiondetail'
 import Settings from '../../views/settings'
 import Records from '../../views/records'
 import Index from '../../views/index'
-import RealmTasks from '../../realm/index'
-import manager from '../../components/manager/index'
-
 
 export default class NavigatorComp extends Component {
   render() {
@@ -35,8 +32,6 @@ export default class NavigatorComp extends Component {
 
   constructor(props) {
     super(props);
-    RealmTasks.realm = RealmTasks.getRealm();
-    manager.startup();
   }
 
   _renderScene(route, navigator) {
