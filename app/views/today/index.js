@@ -6,75 +6,142 @@ import {
   StyleSheet
 } from 'react-native'
 
-import {ListView, View, Image, Caption, Tile, Title, Text, Subtitle, Button, Screen, Divider, Icon, Row} from '@shoutem/ui'
+import {View, ListView, Image, Caption, Tile, Title, Text, Subtitle, Button, Screen, Divider, Icon, Row} from '@shoutem/ui'
 import RealmTasks from '../../realm/index';
 import * as Progress from 'react-native-progress';
 import config from '../../config/index'
 import TimePicker from '../../components/timepicker/index'
-import Time from 'react-native-gifted-chat/src/Time'
+import utils from '../../utils/index'
 
-export default class Home extends Component{
+export default class Today extends Component{
   constructor(props) {
     super(props)
 
-    this.todos = RealmTasks.realm.objects('Todo').sorted('percentage');
+
+    this.todos = RealmTasks.realm.objects('Todo').sorted('percentage', true);
+    this.getTmpTodos();
     this.todos.addListener((name, changes) => {
-      console.log("changed: " + JSON.stringify(changes));
+      this.getTmpTodos();
+      this.getTmpMissions();
       this.forceUpdate();
     });
-    console.log(this.todos);
+
+    this.missions = RealmTasks.realm.objects('Mission');
+    this.getTmpMissions();
+
     this.updateTime = this.updateTime.bind(this);
+    this.renderTodoRow = this.renderTodoRow.bind(this);
+
   }
 
-  addNew() {
-    console.log(this.todos);
-    RealmTasks.realm.write(() => {
-      RealmTasks.realm.create('Todo', {
-        name: 'asdfasdf',
-        needed: '1:00',
-        spent: '0:30',
-        color: 'red',
-        percentage: 0.5
-      });
-    });
+  getTmpTodos() {
+    this.tmpTodo = [];
+    this.sum = 0;
+    for (let i = 0; i < this.todos.length; i++) {
+      this.tmpTodo.push(this.todos[i]);
+      this.sum += this.todos[i].needed;
+    }
   }
+
+  getTmpMissions() {
+    this.tmpMission = [];
+    for (let i = 0; i < this.missions.length; i++) {
+      if(this.todos.filtered('id = ' + this.missions[i].id).length === 0)
+        this.tmpMission.push(this.missions[i]);
+    }
+  }
+
 
   adjustTime(t, i) {
     //this.timePicker = new TimePicker;
     this.timePicker.show(t, this.updateTime.bind(undefined, i));
   }
 
+  deleteTodo(i) {
+    RealmTasks.realm.write(() => {
+      RealmTasks.realm.delete(this.todos[i]);
+    });
+  }
+
+  addTodo(i) {
+    let mission = this.missions[i];
+    RealmTasks.realm.write(() => {
+      RealmTasks.realm.create('Todo', {
+        id: mission.id,
+        name: mission.name,
+        needed: mission.daily || 1,
+        spent: 0
+      });
+    });
+  }
+
   updateTime(i, time) {
-    console.log("update" + i + time);
     RealmTasks.realm.write(() => {
       this.todos[i].needed = time;
     });
   }
 
-  render() {
-    let tmptodo = [];
-    for(let i = 0; i < this.todos.length; i++)
-      tmptodo.push(
-        <Row key={i} styleName="small">
-          {/*<Icon name="add-to-favorites-open"/>*/}
-          <Progress.Pie style={styles.rowleft} progress={this.todos[i].percentage} size={20} color={config.blue}/>
-          <Text>{this.todos[i].name}</Text>
-          <Button title="adjusttime" styleName="disclosure" onPress={() => this.adjustTime(this.todos[i].needed, i)}>
-            <Text>Time:{this.todos[i].needed}</Text>
-            <View styleName="Vertical">
-              <Icon name="up-arrow" />
-              <Icon name="down-arrow" />
-            </View>
-          </Button>
-      </Row>);
-    console.log(tmptodo);
+  renderMissionRow(mission, sectionId, i) {
     return (
       <View>
-        {tmptodo}
-        <Button title="addnew" onPress={() => this.addNew()}>
-          <Icon name="add-event" />
-          <Text>ADD TO CALENDAR</Text>
+        <Row styleName="small">
+          <Icon name="add-to-favorites-open"/>
+          <Text>{mission.name}</Text>
+
+          <Button title="delete" styleName="right-icon" onPress={() => this.addTodo(i)}>
+            <Icon name="add" />
+          </Button>
+        </Row>
+        <Divider styleName="line"/>
+      </View>)
+  }
+
+  renderTodoRow(todo,sectionId,i){
+    return (
+      <View>
+        <Row styleName="small">
+         {/*<Icon name="add-to-favorites-open"/>*/}
+        <Progress.Pie style={styles.rowleft} progress={todo.percentage} size={20} color={config.blue}/>
+        <Text>{todo.name}</Text>
+
+        <Button title="adjusttime" styleName="disclosure" onPress={() => this.adjustTime(utils.m2s(todo.needed), i)}>
+          <Text>Time:{utils.m2s(todo.needed)}</Text>
+          <View styleName="Vertical">
+            <Icon name="up-arrow" />
+            <Icon name="down-arrow" />
+          </View>
         </Button>
+
+        <Button title="delete" styleName="right-icon" onPress={() => this.deleteTodo(i)}>
+          <Icon name="close" />
+        </Button>
+        </Row>
+        <Divider styleName="line"/>
+      </View>)
+  }
+
+  render() {
+    return (
+      <View>
+        <Divider styleName="section-header">
+          <Caption>Todo list</Caption>
+        </Divider>
+        <ListView
+          data={this.tmpTodo}
+          renderRow={this.renderTodoRow}
+        />
+        <Divider styleName="section-header">
+          <Caption>Missions</Caption>
+        </Divider>
+        <ListView
+          data={this.tmpMission}
+          renderRow={this.renderRow}
+        />
+        <Button>
+          <Icon name = "add-to-favorites-full"/>
+          <Text>{utils.m2s(this.sum)}</Text>
+        </Button>
+
         <TimePicker ref={(ref) => this.timePicker = ref}/>
       </View>
     )

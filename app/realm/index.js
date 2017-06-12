@@ -10,12 +10,9 @@ import config from '../config';
 let realm = null;
 
 function getRealm() {
-  return new Realm({
-    schema: schemas
-  });
   let user = Realm.Sync.User.current;
-  if (!user) {
-    connect('login', '123', '123', (error, newuser) => {
+  if (true) {
+    connect('login', 'testuser', 'testuser', (error, newuser) => {
       user = newuser;
       console.log(error ? error.message : "New user Success");
     });

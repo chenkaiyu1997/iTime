@@ -18,11 +18,9 @@ export default class Home extends Component{
   constructor(props) {
     super(props)
     this.state = {
-      selectedTab: 'home',
-      editMode : false
+      selectedTab: 'home'
     }
 
-    this._handleChangeEditMode = this._handleChangeEditMode.bind(this);
     this._handleChangeSelectedTab = this._handleChangeSelectedTab.bind(this);
   }
 
@@ -32,19 +30,11 @@ export default class Home extends Component{
     })
   }
 
-  _handleChangeEditMode(editMode) {
-    this.setState({
-      editMode: editMode
-    })
-  }
-
   render() {
     return (
       <View style={styles.container}>
-        <NavbarComp route={this.props.route} navigator={this.props.navigator} {...this.state} onChangeSelectedTab={this._handleChangeSelectedTab}
-                    onChangeEditMode={this._handleChangeEditMode}/>
-        <TabBarComp route={this.props.route} navigator={this.props.navigator} {...this.state} onChangeSelectedTab={this._handleChangeSelectedTab}
-                    onChangeEditMode={this._handleChangeEditMode} />
+        <NavbarComp route={this.props.route} navigator={this.props.navigator} {...this.state} onChangeSelectedTab={this._handleChangeSelectedTab}/>
+        <TabBarComp route={this.props.route} navigator={this.props.navigator} {...this.state} onChangeSelectedTab={this._handleChangeSelectedTab}/>
       </View>
     )
   }
