@@ -43,6 +43,7 @@ function newDay() {
   RealmTasks.realm.write(() => {
     let yesterday = RealmTasks.realm.objects('Day').filtered('date = ' + '"' + moment().subtract(1, 'days').format('MM-DD-YYYY') + '"');
     let today = RealmTasks.realm.objects('Day').filtered('date = ' + '"' + moment().format('MM-DD-YYYY') + '"');
+    if(today.length > 0) return;
     RealmTasks.realm.delete(yesterday);
     RealmTasks.realm.delete(today);
     RealmTasks.realm.create('Day', {
