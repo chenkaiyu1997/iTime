@@ -39,8 +39,10 @@ export default class Missions extends Component{
   getTmpMissions() {
     this.tmpMissions = [];
     this.maxid = 0;
+    this.sum = 0;
     for (let i = 0; i < this.missions.length; i++) {
       this.tmpMissions.push(this.missions[i]);
+      this.sum += this.missions[i].daily;
       this.maxid = Math.max(this.maxid, this.missions[i].id);
     }
   }
@@ -163,6 +165,10 @@ export default class Missions extends Component{
             <Icon name = "add-event"/>
             <Text>Add simple mission</Text>
           </Button>}
+        <Button>
+          <Icon name = "checkbox-on"/>
+          <Text>{'Daily: ' + utils.m2s(this.sum)}</Text>
+        </Button>
         <TimePicker ref={(ref) => this.timePicker = ref}/>
       </ScrollView>
     )

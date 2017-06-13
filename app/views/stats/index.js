@@ -41,7 +41,7 @@ export default class Stats extends Component{
           <Title></Title>
         </Button>
         <View styleName="vertical stretch space-between">
-          <Subtitle>{'Percentage: ' + day.percentage + '\nLearning Time: ' + day.learning}</Subtitle>
+          <Subtitle>{'Percentage: ' + day.percentage.toFixed(2) + '\nLearning Time: ' + day.learning}</Subtitle>
           <Caption>{day.getup + '~' +  day.sleep}</Caption>
         </View>
         <Button styleName="disclosure">

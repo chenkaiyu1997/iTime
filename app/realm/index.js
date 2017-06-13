@@ -13,23 +13,38 @@ let realm = null;
 function getRealm(next, next2) {
   let user = Realm.Sync.User.current;
   if (!user) {
-    connect('register', 'testuser', 'testuser', (error, newuser) => {
-      connect('login', 'testuser', 'testuser', (error, newuser) => {
-        console.warn('connected');
-        user = newuser;
-        RealmTasks.realm = new Realm({
-          sync: {
-            user: user,
-            url: config.db_uri,
-          },
-          schema: schemas,
-          path: config.db_path
-        });
-        console.log(error ? error.message : "New user Success");
-        next();
-        next2();
+    connect('login', 'testuser', 'testuser', (error, newuser) => {
+      console.warn('connected');
+      user = newuser;
+      RealmTasks.realm = new Realm({
+        sync: {
+          user: user,
+          url: config.db_uri,
+        },
+        schema: schemas,
+        path: config.db_path
       });
+      console.log(error ? error.message : "New user Success");
+      next();
+      next2();
     });
+    // connect('register', 'testuser', 'testuser', (error, newuser) => {
+    //   connect('login', 'testuser', 'testuser', (error, newuser) => {
+    //     console.warn('connected');
+    //     user = newuser;
+    //     RealmTasks.realm = new Realm({
+    //       sync: {
+    //         user: user,
+    //         url: config.db_uri,
+    //       },
+    //       schema: schemas,
+    //       path: config.db_path
+    //     });
+    //     console.log(error ? error.message : "New user Success");
+    //     next();
+    //     next2();
+    //   });
+    // });
   }
   else {
     RealmTasks.realm = new Realm({

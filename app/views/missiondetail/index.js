@@ -39,12 +39,26 @@ export default class Missiondetail extends Component{
       spent: 0,
       date: this.mission.date,
       needed: 1,
+      percentage: 0,
       deadline: ''
     };
+    this.allValues();
 
     this.renderitem = this.renderitem.bind(this);
     this.updateDate = this.updateDate.bind(this);
 
+  }
+
+  allValues() {
+    this.setState({
+      name: this.mission.name,
+      daily: this.mission.daily,
+      spent: this.mission.spent,
+      date: this.mission.date,
+      needed: this.mission.needed,
+      percentage: this.mission.percentage,
+      deadline: ''
+    });
   }
   onChangeText(part, text) {
     let tmp = {};
@@ -87,9 +101,10 @@ export default class Missiondetail extends Component{
   updateDate(part, time) {
     RealmTasks.realm.write(() => {
       this.mission[part] = time;
-      this.needed = this.mission.daily * moment().diff(moment(time, 'MM-DD-YYYY'), 'days') + 1;
-      this.percentage = this.needed === 0 ? 0 : this.spent / this.needed;
+      this.mission.needed = this.mission.daily * (moment().diff(moment(time, 'MM-DD-YYYY'), 'days') + 1);
+      this.mission.percentage = this.needed === 0 ? 0 : this.mission.spent / this.mission.needed;
     });
+    setImmediate(() => this.allValues());
   }
 
   render() {
@@ -100,6 +115,8 @@ export default class Missiondetail extends Component{
         {this.renderitem('name')}
         {this.renderitem('daily', 'numeric')}
         {this.renderitem('spent', 'numeric')}
+        {this.renderitem('needed', 'numeric')}
+        {this.renderitem('percentage', 'numeric')}
         <Divider styleName="section-header">
           <Caption>
             {'Date'}

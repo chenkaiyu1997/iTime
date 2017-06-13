@@ -19,7 +19,7 @@ export default class Today extends Component{
     super(props)
 
 
-    this.todos = RealmTasks.realm.objects('Todo').sorted('percentage', true);
+    this.todos = RealmTasks.realm.objects('Todo').sorted('percentage');
     this.getTmpTodos();
     this.todos.addListener((name, changes) => {
       this.getTmpTodos();
@@ -29,6 +29,10 @@ export default class Today extends Component{
 
     this.missions = RealmTasks.realm.objects('Mission');
     this.getTmpMissions();
+    this.missions.addListener((name, changes) => {
+      this.getTmpMissions();
+      this.forceUpdate();
+    });
 
     this.updateTime = this.updateTime.bind(this);
     this.renderTodoRow = this.renderTodoRow.bind(this);

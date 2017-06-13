@@ -11,8 +11,9 @@ import RealmTasks from '../../realm/index'
 import utils from '../../utils/index'
 let moment = require('moment');
 
-function getGrade(percentage, getup, sleep) {
-  if(percentage < 0.3) return 'F';
+function getGrade(percentage, getup, sleep, learning) {
+
+  if(learning < 1 || percentage < 0.3) return 'F';
   if(percentage < 0.4) return 'E';
   if(percentage < 0.6) return 'D';
   if(percentage < 0.7) return 'C';
@@ -31,18 +32,19 @@ function newDay() {
 
   let sum = 0, learning = 0, lack = 0;
   for (let i = 0; i < todos.length; i++) {
-    if (todos[i].needed <= 0) continue;
+    if (todos[i].name === 'Normal') continue;
     learning += todos[i].spent;
     sum += todos[i].needed;
     lack += Math.max(0, todos[i].needed - todos[i].spent);
   }
   let getup = records[0] ? records[0].endtime : '0:00';
   let sleep = records[records.length - 1] ? records[records.length - 1].endtime : '0:00';
-  let grade = getGrade(sum === 0 ? 0 : lack / sum, getup, sleep);
+  let grade = getGrade(sum === 0 ? 0 : lack / sum, getup, sleep, learning);
   RealmTasks.realm.write(() => {
     let yesterday = RealmTasks.realm.objects('Day').filtered('date = ' + '"' + moment().subtract(1, 'days').format('MM-DD-YYYY') + '"');
+    let today = RealmTasks.realm.objects('Day').filtered('date = ' + '"' + moment().format('MM-DD-YYYY') + '"');
     RealmTasks.realm.delete(yesterday);
-
+    RealmTasks.realm.delete(today);
     RealmTasks.realm.create('Day', {
       date: moment().subtract(1, 'days').format('MM-DD-YYYY'),
       learning: learning,
@@ -64,14 +66,14 @@ function newDay() {
     RealmTasks.realm.delete(todos);
     RealmTasks.realm.delete(records);
     for (let i = 0; i < missions.length; i++) {
-      if (missions[i].daily > 0)
+      if (missions[i].daily > 0 || missions[i].name === 'Normal')
         RealmTasks.realm.create('Todo', {
           id: missions[i].id,
           name: missions[i].name,
           needed: missions[i].daily,
           spent: 0
         });
-      missions[i].needed = missions[i].daily * moment().diff(moment(missions[i].date), 'days') + 1
+      missions[i].needed = missions[i].daily * (moment().diff(moment(missions[i].date,'MM-DD-YYYY'), 'days') + 1)
     }
   });
 }

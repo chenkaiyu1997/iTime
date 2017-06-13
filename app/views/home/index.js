@@ -20,7 +20,7 @@ export default class Home extends Component{
   constructor(props) {
     super(props)
 
-    this.todos = RealmTasks.realm.objects('Todo').sorted('percentage', 'reverse');
+    this.todos = RealmTasks.realm.objects('Todo').sorted('percentage');
     this.getTmpTodos();
     this.todos.addListener((name, changes) => {
       this.getTmpTodos();
@@ -78,6 +78,8 @@ export default class Home extends Component{
     let todo = this.todos.filtered('id = ' + i);
     if(todo.length !== 1)
       console.error("Cant find todo");
+
+    console.warn(minutes);
 
     RealmTasks.realm.write(() => {
       if(todo.length === 1)
