@@ -79,10 +79,15 @@ function newDay() {
   });
 }
 
+function startup() {
+  let days = RealmTasks.realm.objects('Day');
+  if(days.length === 0 || days[days.length - 1].date !== moment().format('MM-DD-YYYY'))
+    newDay();
+  setTimeout(() => startup(), 60000);
+}
+
 export default {
   startup: function() {
-    let days = RealmTasks.realm.objects('Day');
-    if(days.length === 0 || days[days.length - 1].date !== moment().format('MM-DD-YYYY'))
-      newDay();
+    setTimeout(() => startup(), 20000);
   }
 }
