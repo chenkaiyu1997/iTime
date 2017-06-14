@@ -21,7 +21,7 @@ export default class Missions extends Component{
   constructor(props) {
     super(props)
 
-    this.missions = RealmTasks.realm.objects('Mission');
+    this.missions = RealmTasks.realm.objects('Mission').sorted('percentage');
     this.getTmpMissions();
     this.missions.addListener((name, changes) => {
       this.getTmpMissions();
@@ -102,6 +102,28 @@ export default class Missions extends Component{
       { cancelable: true }
     )
   }
+  resetDate() {
+    RealmTasks.realm.write(() => {
+      for(let i = 0; i < this.missions.length; i++) {
+        this.missions[i].date = moment().format('MM-DD-YYYY');
+        this.missions[i].spent = 0;
+        this.missions[i].needed = this.missions[i].daily * (moment().diff(moment(this.missions[i].date, 'MM-DD-YYYY'), 'days') + 1);
+        this.missions[i].percentage = this.missions[i].needed === 0 ? 0 : this.missions[i].spent / this.missions[i].needed;
+      }
+      this.missions.date = moment().format('MM-DD-YYYY');
+    })
+  }
+  resetDateAlert() {
+    Alert.alert(
+      'Are you sure',
+      'This operation may not be recovered',
+      [
+        {text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
+        {text: 'OK', onPress: () => setImmediate(() => this.resetDate())},
+      ],
+      { cancelable: true }
+    )
+  }
 
   renderRow(mission,sectionId,i){
     return (
@@ -112,8 +134,17 @@ export default class Missions extends Component{
 
           <Text>{mission.name}</Text>
 
+
           <Button title="adjusttime" styleName="disclosure" onPress={() => this.handlePress(i)}>
-            <Text>{'View Detail'}</Text>
+            <Text>{utils.m2s(mission.daily)}</Text>
+          </Button>
+
+
+          <Button title="adjusttime" styleName="disclosure" onPress={() => this.handlePress(i)}>
+            <Text>{utils.m2s(mission.spent - mission.needed)}</Text>
+          </Button>
+
+          <Button title="adjusttime" styleName="disclosure" onPress={() => this.handlePress(i)}>
             <Icon name="search"/>
           </Button>
 
@@ -165,6 +196,10 @@ export default class Missions extends Component{
             <Icon name = "add-event"/>
             <Text>Add simple mission</Text>
           </Button>}
+        <Button onPress={() => this.resetDateAlert()}>
+          <Icon name = "refresh"/>
+          <Text>Reset start to today</Text>
+        </Button>
         <Button>
           <Icon name = "checkbox-on"/>
           <Text>{'Daily: ' + utils.m2s(this.sum)}</Text>

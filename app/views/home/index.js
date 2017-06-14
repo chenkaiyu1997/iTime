@@ -20,7 +20,8 @@ export default class Home extends Component{
   constructor(props) {
     super(props)
 
-    this.todos = RealmTasks.realm.objects('Todo').sorted('percentage');
+    this.todos = RealmTasks.realm.objects('Todo').sorted('needed', true);
+
     this.getTmpTodos();
     this.todos.addListener((name, changes) => {
       this.getTmpTodos();
@@ -47,7 +48,7 @@ export default class Home extends Component{
     this.tmpCompletedTodo = [];
     this.sum = 0;
     for (let i = 0; i < this.todos.length; i++) {
-      if(this.todos[i].completed)
+      if(this.todos[i].done)
         this.tmpCompletedTodo.push(this.todos[i]);
       else {
         this.sum += Math.max(0, this.todos[i].needed - this.todos[i].spent);

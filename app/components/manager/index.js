@@ -39,7 +39,7 @@ function newDay() {
   }
   let getup = records[0] ? records[0].endtime : '0:00';
   let sleep = records[records.length - 1] ? records[records.length - 1].endtime : '0:00';
-  let grade = getGrade(sum === 0 ? 0 : lack / sum, getup, sleep, learning);
+  let grade = getGrade(sum === 0 ? 0 : (sum - lack) / sum, getup, sleep, learning);
   RealmTasks.realm.write(() => {
     let yesterday = RealmTasks.realm.objects('Day').filtered('date = ' + '"' + moment().subtract(1, 'days').format('MM-DD-YYYY') + '"');
     let today = RealmTasks.realm.objects('Day').filtered('date = ' + '"' + moment().format('MM-DD-YYYY') + '"');
@@ -49,7 +49,7 @@ function newDay() {
     RealmTasks.realm.create('Day', {
       date: moment().subtract(1, 'days').format('MM-DD-YYYY'),
       learning: learning,
-      percentage: sum === 0 ? 0 : lack / sum,
+      percentage: sum === 0 ? 0 : (sum - lack) / sum,
       getup: getup,
       sleep: sleep,
       grade: grade

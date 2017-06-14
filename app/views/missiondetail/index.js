@@ -6,7 +6,8 @@ import React, {
 } from 'react'
 
 import {
-  StyleSheet
+  StyleSheet,
+  ScrollView
 } from 'react-native'
 
 import {View, TextInput, ListView, Image, Caption, Tile, Title, Text, Subtitle, Button, Screen, Divider, Icon, Row, DropDownMenu} from '@shoutem/ui'
@@ -36,15 +37,16 @@ export default class Missiondetail extends Component{
     this.state = {
       name: this.mission.name,
       daily: this.mission.daily,
-      spent: 0,
+      spent: this.mission.spent,
       date: this.mission.date,
-      needed: 1,
-      percentage: 0,
+      needed: this.mission.needed,
+      percentage: this.mission.percentage,
       deadline: ''
     };
     this.allValues();
 
     this.renderitem = this.renderitem.bind(this);
+    this.allValues = this.allValues.bind(this);
     this.updateDate = this.updateDate.bind(this);
 
   }
@@ -102,14 +104,14 @@ export default class Missiondetail extends Component{
     RealmTasks.realm.write(() => {
       this.mission[part] = time;
       this.mission.needed = this.mission.daily * (moment().diff(moment(time, 'MM-DD-YYYY'), 'days') + 1);
-      this.mission.percentage = this.needed === 0 ? 0 : this.mission.spent / this.mission.needed;
+      this.mission.percentage = this.mission.needed === 0 ? 0 : this.mission.spent / this.mission.needed;
     });
     setImmediate(() => this.allValues());
   }
 
   render() {
     return (
-      <View>
+      <ScrollView>
         <NavbarComp route={this.props.route} navigator={this.props.navigator}/>
 
         {this.renderitem('name')}
@@ -127,7 +129,7 @@ export default class Missiondetail extends Component{
           <Icon name="add-event" onPress={() => this.showPicker(this.mission.date, 'date')}/>
         </Row>
         <DatePicker ref={(ref) => this.datePicker = ref}/>
-      </View>
+      </ScrollView>
     )
   }
 

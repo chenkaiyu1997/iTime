@@ -180,14 +180,14 @@ export default class Records extends Component{
 
   render() {
     return (
-      <View>
+      <ScrollView>
         <NavbarComp route={this.props.route} navigator={this.props.navigator}/>
         <ListView
           data={this.tmpRecords}
           renderRow={this.renderRow}
         />
         <TimePicker ref={(ref) => this.timePicker = ref}/>
-      </View>
+      </ScrollView>
     )
   }
 }

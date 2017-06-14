@@ -26,7 +26,7 @@ export default class Stats extends Component{
 
   getTmpDays() {
     this.tmpDays = [];
-    for (let i = 1; i < this.days.length; i++) {
+    for (let i = 0; i < this.days.length; i++) {
       this.tmpDays.push(this.days[i]);
     }
   }

@@ -42,7 +42,7 @@ export default class DatePicker extends Component {
     return (
       <HisDatePicker
         ref={(ref) => this.datePicker=ref}
-        style={{height: 0}}
+        style={{opacity: 0}}
         date={this.state.time}
         mode="date"
         placeholder="select date"
