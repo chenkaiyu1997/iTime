@@ -21,8 +21,11 @@ export default class Missions extends Component{
   constructor(props) {
     super(props)
 
-    this.missions = RealmTasks.realm.objects('Mission').sorted('percentage');
+    this.missions = RealmTasks.realm.objects('Mission').sorted('needed', true);
+    this.missions = this.missions.sorted('percentage');
+
     this.getTmpMissions();
+
     this.missions.addListener((name, changes) => {
       this.getTmpMissions();
       this.forceUpdate();

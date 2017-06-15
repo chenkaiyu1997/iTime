@@ -19,7 +19,9 @@ export default class Today extends Component{
     super(props)
 
 
-    this.todos = RealmTasks.realm.objects('Todo').sorted('percentage');
+    this.todos = RealmTasks.realm.objects('Todo').sorted('needed', true);
+    this.todos = this.todos.sorted('percentage');
+
     this.getTmpTodos();
     this.todos.addListener((name, changes) => {
       this.getTmpTodos();
@@ -37,6 +39,8 @@ export default class Today extends Component{
     this.updateTime = this.updateTime.bind(this);
     this.renderTodoRow = this.renderTodoRow.bind(this);
     this.renderMissionRow = this.renderMissionRow.bind(this);
+    this.getSum = this.getSum.bind(this);
+    this.getMissionById = this.getMissionById.bind(this);
 
   }
 
@@ -50,10 +54,14 @@ export default class Today extends Component{
   }
 
   getTmpMissions() {
+    this.missionSum = 0;
     this.tmpMission = [];
     for (let i = 0; i < this.missions.length; i++) {
       if(this.todos.filtered('id = ' + this.missions[i].id).length === 0)
         this.tmpMission.push(this.missions[i]);
+    }
+    for (let i = 0; i < this.missions.length; i++) {
+      this.missionSum += Math.max(0, this.missions[i].needed - this.missions[i].spent);
     }
   }
 
@@ -86,6 +94,31 @@ export default class Today extends Component{
       this.todos[i].needed = utils.s2m(time);
     });
   }
+
+  changeSum(t) {
+    this.timePicker.show(t, this.getSum);
+  }
+
+  getMissionById(id) {
+    for (let i = 0; i < this.missions.length; i++) {
+      if(this.missions[i].id === id)
+        return this.missions[i];
+    }
+    return this.missions[0];
+  }
+
+  getSum(time) {
+    RealmTasks.realm.write(() => {
+      for (let i = 0; i < this.todos.length; i++) {
+        let mission = this.getMissionById(this.todos[i].id);
+        if((mission.needed - mission.spent) < 0)
+          this.todos[i].needed = 0;
+        else
+          this.todos[i].needed = parseInt((mission.needed - mission.spent) * utils.s2m(time) / this.missionSum + 0.5, 10);
+      }
+    });
+  }
+
 
   renderMissionRow(mission, sectionId, i) {
     return (
@@ -143,7 +176,7 @@ export default class Today extends Component{
           data={this.tmpMission}
           renderRow={this.renderMissionRow}
         />
-        <Button>
+        <Button onPress={() => this.changeSum(utils.m2s(this.sum))}>
           <Icon name = "checkbox-on"/>
           <Text>{utils.m2s(this.sum)}</Text>
         </Button>

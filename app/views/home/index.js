@@ -21,6 +21,7 @@ export default class Home extends Component{
     super(props)
 
     this.todos = RealmTasks.realm.objects('Todo').sorted('needed', true);
+    this.todos = this.todos.sorted('percentage');
 
     this.getTmpTodos();
     this.todos.addListener((name, changes) => {
@@ -38,30 +39,29 @@ export default class Home extends Component{
     this.missions = RealmTasks.realm.objects('Mission');
 
     this.renderTodoRow = this.renderTodoRow.bind(this);
-    this.renderCompletedRow = this.renderCompletedRow.bind(this);
 
     this.addRecord = this.addRecord.bind(this);
   }
 
   getTmpTodos() {
     this.tmpTodo = [];
-    this.tmpCompletedTodo = [];
+    // this.tmpCompletedTodo = [];
     this.sum = 0;
     for (let i = 0; i < this.todos.length; i++) {
-      if(this.todos[i].done)
-        this.tmpCompletedTodo.push(this.todos[i]);
-      else {
-        this.sum += Math.max(0, this.todos[i].needed - this.todos[i].spent);
-        this.tmpTodo.push(this.todos[i]);
-      }
+      // if(this.todos[i].done)
+      //   this.tmpCompletedTodo.push(this.todos[i]);
+      // else {
+      this.sum += Math.max(0, this.todos[i].needed - this.todos[i].spent);
+      this.tmpTodo.push(this.todos[i]);
+      // }
     }
   }
 
-  completeTodo(i, state) {
-    RealmTasks.realm.write(() => {
-      this.todos[i].done = state
-    });
-  }
+  // completeTodo(i, state) {
+  //   RealmTasks.realm.write(() => {
+  //     this.todos[i].done = state
+  //   });
+  // }
 
   modifyAdd(i) {
     this.timePicker.show(moment().format('H:mm'), this.addRecord.bind(undefined, i));
@@ -123,34 +123,34 @@ export default class Home extends Component{
           <Button title="modify-record" styleName="right-icon" onPress={() => this.modifyAdd(i)}>
             <Icon name="edit" />
           </Button>
-          <Button title="complete" styleName="right-icon" onPress={() => this.completeTodo(i, true)}>
-            <Icon name="checkbox-on" />
-          </Button>
+          {/*<Button title="complete" styleName="right-icon" onPress={() => this.completeTodo(i, true)}>*/}
+            {/*<Icon name="checkbox-on" />*/}
+          {/*</Button>*/}
         </Row>
         <Divider styleName="line"/>
       </View>)
   }
-  renderCompletedRow(todo,sectionId,i){
-    console.log(i);
-    return (
-      <View>
-        <Row styleName="small">
-          <Progress.Pie style={styles.rowleft} progress={todo.percentage} size={20} color={config.blue}/>
-          <Text>{todo.name}</Text>
-
-          <Button title="record" styleName="right-icon" onPress={() => {}}>
-            <Text>
-              {utils.m2s(todo.spent - todo.needed)}
-            </Text>
-          </Button>
-
-          <Button title="complete" styleName="right-icon" onPress={() => this.completeTodo(i, false)}>
-            <Icon name="refresh" />
-          </Button>
-        </Row>
-        <Divider styleName="line"/>
-      </View>)
-  }
+  // renderCompletedRow(todo,sectionId,i){
+  //   console.log(i);
+  //   return (
+  //     <View>
+  //       <Row styleName="small">
+  //         <Progress.Pie style={styles.rowleft} progress={todo.percentage} size={20} color={config.blue}/>
+  //         <Text>{todo.name}</Text>
+  //
+  //         <Button title="record" styleName="right-icon" onPress={() => {}}>
+  //           <Text>
+  //             {utils.m2s(todo.spent - todo.needed)}
+  //           </Text>
+  //         </Button>
+  //
+  //         <Button title="complete" styleName="right-icon" onPress={() => this.completeTodo(i, false)}>
+  //           <Icon name="refresh" />
+  //         </Button>
+  //       </Row>
+  //       <Divider styleName="line"/>
+  //     </View>)
+  // }
 
   render() {
     return (
@@ -162,13 +162,13 @@ export default class Home extends Component{
           data={this.tmpTodo}
           renderRow={this.renderTodoRow}
         />
-        <Divider styleName="section-header">
-          <Caption>Completed</Caption>
-        </Divider>
-        <ListView
-          data={this.tmpCompletedTodo}
-          renderRow={this.renderCompletedRow}
-        />
+        {/*<Divider styleName="section-header">*/}
+          {/*<Caption>Completed</Caption>*/}
+        {/*</Divider>*/}
+        {/*<ListView*/}
+          {/*data={this.tmpCompletedTodo}*/}
+          {/*renderRow={this.renderCompletedRow}*/}
+        {/*/>*/}
         <Button>
           <Icon name = "like"/>
           <Text>{utils.m2s(this.sum)} To go ~</Text>

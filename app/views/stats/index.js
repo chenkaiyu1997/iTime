@@ -4,7 +4,8 @@ import React, {
 
 import {
   StyleSheet,
-  ScrollView
+  ScrollView,
+  Alert
 } from 'react-native'
 
 import {View, ListView, Image, Caption, Tile, Title, Text, Subtitle, Button, Screen, Divider, Icon, Row} from '@shoutem/ui'
@@ -21,7 +22,13 @@ export default class Stats extends Component{
     this.days = RealmTasks.realm.objects('Day').sorted('date', true);
     this.getTmpDays();
 
+    this.days.addListener((name, changes) => {
+      this.getTmpDays();
+      this.forceUpdate();
+    });
+
     this.renderDayRow = this.renderDayRow.bind(this);
+    this.deleteDay = this.deleteDay.bind(this);
   }
 
   getTmpDays() {
@@ -29,6 +36,24 @@ export default class Stats extends Component{
     for (let i = 0; i < this.days.length; i++) {
       this.tmpDays.push(this.days[i]);
     }
+  }
+
+  deleteDay(i) {
+    RealmTasks.realm.write(() => {
+      RealmTasks.realm.delete(this.days[i]);
+    });
+  }
+
+  deleteAlert(i) {
+    Alert.alert(
+      'Are you sure',
+      'This operation may not be recovered',
+      [
+        {text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
+        {text: 'OK', onPress: () => setImmediate(() => this.deleteDay(i))},
+      ],
+      { cancelable: true }
+    )
   }
 
   renderDayRow(day,sectionId,i){
@@ -44,7 +69,7 @@ export default class Stats extends Component{
           <Subtitle>{'Percentage: ' + day.percentage.toFixed(2) + '\nLearning Time: ' + day.learning}</Subtitle>
           <Caption>{day.getup + '~' +  day.sleep}</Caption>
         </View>
-        <Button styleName="disclosure">
+        <Button styleName="disclosure" onPress={() => this.deleteAlert(i)}>
           <Title>{day.grade}</Title>
         </Button>
       </Row>)

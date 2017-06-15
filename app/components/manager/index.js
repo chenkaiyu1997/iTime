@@ -66,15 +66,23 @@ function newDay() {
 
     RealmTasks.realm.delete(todos);
     RealmTasks.realm.delete(records);
+    let sumDaily = 0;
     for (let i = 0; i < missions.length; i++) {
-      if (missions[i].daily > 0 || missions[i].name === 'Normal')
+      missions[i].needed = missions[i].daily * (moment().diff(moment(missions[i].date, 'MM-DD-YYYY'), 'days') + 1);
+      missions[i].percentage = missions[i].needed === 0 ? 0 : missions[i].spent / missions[i].needed;
+    }
+    for (let i = 0; i < missions.length; i++) {
+      sumDaily += Math.max(0, missions[i].needed - missions[i].spent);
+    }
+
+    for (let i = 0; i < missions.length; i++) {
+      if (missions[i].needed - missions[i].spent > 0 || missions[i].name === 'Normal')
         RealmTasks.realm.create('Todo', {
           id: missions[i].id,
           name: missions[i].name,
-          needed: missions[i].daily,
+          needed: parseInt((missions[i].needed - missions[i].spent) * 720 / sumDaily + 0.5, 10),
           spent: 0
         });
-      missions[i].needed = missions[i].daily * (moment().diff(moment(missions[i].date,'MM-DD-YYYY'), 'days') + 1)
     }
   });
 }
