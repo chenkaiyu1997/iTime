@@ -75,9 +75,10 @@ export default class Missiondetail extends Component{
       tmp = parseInt(tmp, 10);
     RealmTasks.realm.write(() => {
       this.mission[part] = tmp;
-      this.mission.needed = this.mission.daily * (moment().diff(moment(time, 'MM-DD-YYYY'), 'days') + 1);
+      this.mission.needed = this.mission.daily * (moment().diff(moment(this.mission.date, 'MM-DD-YYYY'), 'days') + 1);
       this.mission.percentage = this.mission.needed === 0 ? 0 : this.mission.spent / this.mission.needed;
     });
+    setImmediate(() => this.allValues());
   }
   renderitem(part, keyboard='default') {
     return (
