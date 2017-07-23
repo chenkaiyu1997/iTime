@@ -171,7 +171,7 @@ export default class Home extends Component{
         {/*/>*/}
         <Button>
           <Icon name = "like"/>
-          <Text>{utils.m2s(this.sum)} To go ~</Text>
+          <Text>{'Lasttime: ' + this.lastTime + ', ' + utils.m2s(this.sum)} To go ~</Text>
         </Button>
         <TimePicker ref={(ref) => this.timePicker = ref}/>
       </ScrollView>
