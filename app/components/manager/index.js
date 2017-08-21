@@ -80,7 +80,7 @@ function newDay() {
         RealmTasks.realm.create('Todo', {
           id: missions[i].id,
           name: missions[i].name,
-          needed: parseInt((missions[i].needed - missions[i].spent) * 720 / sumDaily + 0.5, 10),
+          needed: missions[i].name === 'Normal' ? 0 : parseInt((missions[i].needed - missions[i].spent) * 720 / sumDaily + 0.5, 10),
           spent: 0
         });
     }
@@ -89,7 +89,7 @@ function newDay() {
 
 function startup() {
   let days = RealmTasks.realm.objects('Day');
-  if(days.length === 0 || days[days.length - 1].date !== moment().format('MM-DD-YYYY'))
+  if(Realm.Sync.Session.state === 'active' && (days.length === 0 || days[days.length - 1].date !== moment().format('MM-DD-YYYY')))
     newDay();
   setTimeout(() => startup(), 60000);
 }

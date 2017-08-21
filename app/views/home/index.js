@@ -21,7 +21,7 @@ export default class Home extends Component{
     super(props)
 
     this.todos = RealmTasks.realm.objects('Todo').sorted('needed', true);
-    this.todos = this.todos.sorted('percentage');
+    //this.todos = this.todos.sorted('percentage');
 
     this.getTmpTodos();
     this.todos.addListener((name, changes) => {
@@ -55,6 +55,9 @@ export default class Home extends Component{
       this.tmpTodo.push(this.todos[i]);
       // }
     }
+    this.tmpTodo.sort((a, b) => {
+      return a.percentage === b.percentage ? b.needed - a.needed : a.percentage - b.percentage;
+    })
   }
 
   // completeTodo(i, state) {
@@ -70,7 +73,7 @@ export default class Home extends Component{
   addRecord(i, time) {
     let minutes = utils.s2m(time) - utils.s2m(this.lastTime);
     if(minutes < 0) return;
-    i = this.todos[i].id;
+    i = this.tmpTodo[i].id;
 
     let mission = this.missions.filtered('id = ' + i);
     if(mission.length !== 1)
